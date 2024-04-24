@@ -12,22 +12,29 @@ public class MuteButton : MonoBehaviour
     private string _enabledName = "Выкл. звук";
     private string _disabledName = "Вкл. звук";
 
-    public void ToggleSound() =>
-        _mixer.audioMixer.SetFloat(_mixer.name, GetValue());
-
-    private float GetValue()
+    private float SoundValue
     {
-        _mixer.audioMixer.GetFloat(_mixer.name, out float value);
+        get
+        {
+            _mixer.audioMixer.GetFloat(_mixer.name, out float value);
 
-        if (value == _enableVolume)
-        {
-            _text.text = _enabledName;
-            return _disableVolume;
-        }
-        else
-        {
-            _text.text = _disabledName;
-            return _enableVolume;
+            return value;
         }
     }
+
+    private void Awake() =>
+        SetText();
+
+    public void ToggleSound()
+    {
+        _mixer.audioMixer.SetFloat(_mixer.name, GetValue());
+
+        SetText();
+    }
+
+    private float GetValue() =>
+        SoundValue == _enableVolume ? _disableVolume : _enableVolume;
+
+    private void SetText() =>
+        _text.text = SoundValue == _enableVolume ? _enabledName : _disabledName;
 }
